@@ -1,10 +1,13 @@
 package br.ufma.ecp;
 
+import static br.ufma.ecp.token.TokenType.*;
+
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import static br.ufma.ecp.TokenType.*;
+import br.ufma.ecp.token.Token;
+import br.ufma.ecp.token.TokenType;
 
 public class Scanner {
 
@@ -60,6 +63,8 @@ public class Scanner {
             case '-':
                 advance();
                 return new Token (MINUS,"-");
+            case '"':
+                return string();
             case 0:
                 return new Token (EOF,"EOF");
             default:
@@ -86,6 +91,18 @@ public class Scanner {
             return new Token(NUMBER, num);
     }
 
+    private Token string () {
+        advance();
+        start = current;
+        while (peek() != '"' && peek() != 0) {
+            advance();
+        }
+        String s = new String(input, start, current-start, StandardCharsets.UTF_8);
+        Token token = new Token (TokenType.STRING,s);
+        advance();
+        return token;
+    }
+
     private void advance()  {
         char ch = peek();
         if (ch != 0) {
@@ -110,12 +127,6 @@ public class Scanner {
        return 0;
     }
 
-    private void match (char c) {
-        if (c == peek()) {
-            current++;
-        } else {
-            throw new Error("syntax error");
-        }
-    }
+
     
 }

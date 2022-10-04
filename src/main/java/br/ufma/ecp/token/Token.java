@@ -1,8 +1,8 @@
-package br.ufma.ecp;
+package br.ufma.ecp.token;
 public class Token {
 
-    final TokenType type;
-    final String lexeme;
+    public final TokenType type;
+    public final String lexeme;
 
     public Token (TokenType type, String lexeme) {
         this.type = type;
@@ -10,6 +10,10 @@ public class Token {
     }
 
     public String toString() {
+        var type = this.type.toString();
+        if (TokenType.isSymbol(lexeme.charAt(0)))
+            type = "symbol";
+
         return "<"+ type +">" + lexeme + "</"+ type + ">";
     }
     

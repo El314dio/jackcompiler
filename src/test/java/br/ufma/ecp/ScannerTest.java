@@ -13,6 +13,16 @@ import br.ufma.ecp.token.TokenType;
 
 
 public class ScannerTest extends TestSupport {
+
+
+    @Test
+    public void testSimple () {
+        String input = "45  + if + \"ola mundo\" - 876";
+        Scanner scan = new Scanner (input.getBytes());
+        for (Token tk = scan.nextToken(); tk.type != TokenType.EOF; tk = scan.nextToken()) {
+            System.out.println(tk);
+        }
+    }
     
     @Test
     public void testScannerWithSquareGame() throws IOException {

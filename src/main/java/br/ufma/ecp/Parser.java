@@ -1,5 +1,7 @@
 package br.ufma.ecp;
 
+import br.ufma.ecp.token.Token;
+import br.ufma.ecp.token.TokenType;
 
 public class Parser {
     private Scanner scan;
@@ -53,6 +55,10 @@ public class Parser {
         } else {
             throw new Error("syntax error");
         }
+    }
+
+    public String VMOutput() {
+        return "";
     }
 
 }
