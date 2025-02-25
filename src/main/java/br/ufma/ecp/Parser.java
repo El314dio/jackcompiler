@@ -4,7 +4,8 @@ import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenType;
 
 public class Parser {
-    private static class ParseError extends RuntimeException {}
+    private static class ParseError extends RuntimeException {
+    }
 
     private Scanner scan;
     private Token currentToken;
@@ -14,7 +15,6 @@ public class Parser {
     public Parser(byte[] input) {
         scan = new Scanner(input);
         nextToken();
-        nextToken(); // Para inicializar peekToken
     }
 
     private void nextToken() {
@@ -23,7 +23,6 @@ public class Parser {
     }
 
     public void parse() {
-        expr();
     }
 
     void expr() {
@@ -68,6 +67,10 @@ public class Parser {
         return xmlOutput.toString();
     }
 
+    private void printNonTerminal(String nterminal) {
+        xmlOutput.append(String.format("<%s>\r\n", nterminal));
+    }
+
     boolean peekTokenIs(TokenType type) {
         return peekToken.type == type;
     }
@@ -106,5 +109,63 @@ public class Parser {
             report(token.line, " at '" + token.lexeme + "'", message);
         }
         return new ParseError();
+    }
+
+    void parseTerm() {
+        printNonTerminal("term");
+        switch (peekToken.type) {
+            case NUMBER:
+                expectPeek(TokenType.NUMBER);
+                break;
+            case STRING:
+                expectPeek(TokenType.STRING);
+                break;
+            case FALSE:
+            case NULL:
+            case TRUE:
+                expectPeek(TokenType.FALSE, TokenType.NULL, TokenType.TRUE);
+                break;
+            case THIS:
+                expectPeek(TokenType.THIS);
+                break;
+            case IDENT:
+                expectPeek(TokenType.IDENT);
+                break;
+            default:
+                throw error(peekToken, "term expected");
+        }
+
+        printNonTerminal("/term");
+    }
+
+    static public boolean isOperator(String op) {
+        return op != "" && "+-*/<>=~&|".contains(op);
+    }
+
+    void parseExpression() {
+        printNonTerminal("expression");
+        parseTerm();
+        while (isOperator(peekToken.lexeme)) {
+            expectPeek(peekToken.type);
+            parseTerm();
+        }
+        printNonTerminal("/expression");
+    }
+
+    void parseLet() {
+        printNonTerminal("letStatement");
+        expectPeek(TokenType.LET);
+        expectPeek(TokenType.IDENT);
+
+        if (peekTokenIs(TokenType.LBRACKET)) {
+            expectPeek(TokenType.LBRACKET);
+            parseExpression();
+            expectPeek(TokenType.RBRACKET);
+        }
+
+        expectPeek(TokenType.EQ);
+        parseExpression();
+        expectPeek(TokenType.SEMICOLON);
+        printNonTerminal("/letStatement");
     }
 }
