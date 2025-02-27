@@ -202,7 +202,7 @@ public class Parser {
         printNonTerminal("/letStatement");
     }
 
-    int parseExpressionList() {
+    public int parseExpressionList() {
         printNonTerminal("expressionList");
 
         var nArgs = 0;
@@ -247,14 +247,15 @@ public class Parser {
         }
     }
 
-     // 'do' subroutineCall ';'
-     public void parseDo() {
+    // 'do' subroutineCall ';'
+    public void parseDo() {
         printNonTerminal("doStatement");
         expectPeek(TokenType.DO);
+        expectPeek(TokenType.IDENT);
         parseSubroutineCall();
         expectPeek(TokenType.SEMICOLON);
         printNonTerminal("/doStatement");
-     }
+    }
 
      public void parseClass() {
         printNonTerminal("class");
@@ -405,17 +406,14 @@ public class Parser {
         printNonTerminal("/whileStatement");
     }
 
+    // ReturnStatement -> 'return' expression? ';'
     public void parseReturn() {
         printNonTerminal("returnStatement");
         expectPeek(TokenType.RETURN);
         if (!peekTokenIs(TokenType.SEMICOLON)) {
             parseExpression();
-        } else {
-        //    vmWriter.writePush(Segment.CONST, 0);
         }
         expectPeek(TokenType.SEMICOLON);
-        //vmWriter.writeReturn();
-
         printNonTerminal("/returnStatement");
     }
 
@@ -453,6 +451,4 @@ public class Parser {
                 throw error(peekToken, "Expected a statement");
         }
     }
-
-
 }
