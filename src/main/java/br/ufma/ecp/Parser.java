@@ -1,7 +1,5 @@
 package br.ufma.ecp;
 
-import javax.swing.text.Segment;
-
 import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenType;
 
@@ -28,6 +26,7 @@ public class Parser {
     }
 
     public void parse() {
+        parseClass();
     }
 
     void expr() {
@@ -234,6 +233,26 @@ public class Parser {
         printNonTerminal("/doStatement");
      }
 
+     void parseClass() {
+        printNonTerminal("class");
+        expectPeek(TokenType.CLASS);
+        expectPeek(TokenType.IDENT);
+        className = currentToken.value();
+        expectPeek(TokenType.LBRACE);
+
+        while (peekTokenIs(TokenType.STATIC) || peekTokenIs(TokenType.FIELD)) {
+            parseClassVarDec();
+        }
+
+        while (peekTokenIs(TokenType.FUNCTION) || peekTokenIs(TokenType.CONSTRUCTOR) || peekTokenIs(TokenType.METHOD)) {
+            parseSubroutineDec();
+        }
+
+        expectPeek(TokenType.RBRACE);
+
+        printNonTerminal("/class");
+    }
+
     // classVarDec → ( 'static' | 'field' ) type varName ( ',' varName)* ';'
     void parseClassVarDec() {
         printNonTerminal("classVarDec");
@@ -241,22 +260,16 @@ public class Parser {
 
         // 'int' | 'char' | 'boolean' | className
         expectPeek(TokenType.INT, TokenType.CHAR, TokenType.BOOLEAN, TokenType.IDENT);
-        String type = currentToken.value();
-
         expectPeek(TokenType.IDENT);
-        String name = currentToken.value();
 
         while (peekTokenIs(TokenType.COMMA)) {
             expectPeek(TokenType.COMMA);
             expectPeek(TokenType.IDENT);
-
-            name = currentToken.value();
         }
 
         expectPeek(TokenType.SEMICOLON);
         printNonTerminal("/classVarDec");
     }
-
     
     void parseSubroutineDec() {
         printNonTerminal("subroutineDec");     
