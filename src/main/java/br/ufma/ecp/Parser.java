@@ -167,5 +167,28 @@ public class Parser {
         parseExpression();
         expectPeek(TokenType.SEMICOLON);
         printNonTerminal("/letStatement");
+
+
     }
+
+    //identifier '(' ')'
+    void parseSubroutineCall() {
+       expectPeek(TokenType.IDENT);
+       expectPeek(TokenType.LPAREN);
+       expectPeek(TokenType.RPAREN);
+    }
+
+     
+     // 'do' subroutineCall ';'
+     void parseDo() {
+        printNonTerminal("doStatement");
+        expectPeek(TokenType.DO);
+        parseSubroutineCall();
+        expectPeek(TokenType.SEMICOLON);
+        printNonTerminal("/doStatement");
+     }
+
+
+
+
 }
