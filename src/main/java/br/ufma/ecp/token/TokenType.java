@@ -49,6 +49,15 @@ public enum TokenType {
         return symbols.indexOf(lexame) > -1;
     }
 
+    private TokenType() {
+    }
+
+    private TokenType(String value) {
+        this.value = value;
+    }
+
+    public String value;
+
 
     static public boolean isKeyword (TokenType type) {
         List<TokenType> keywords  = 
@@ -60,5 +69,5 @@ public enum TokenType {
             );
             return keywords.contains(type);
     }
-
+    
 }
