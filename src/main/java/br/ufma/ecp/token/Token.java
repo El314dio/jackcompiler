@@ -14,6 +14,10 @@ public class Token {
         this.line = line;
     }
 
+    public String value () {
+        return type.value;
+    }
+
     public String toString() {
         String categoria = type.toString().toLowerCase();
         String valor = lexeme;
