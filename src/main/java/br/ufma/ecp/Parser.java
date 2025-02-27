@@ -286,11 +286,11 @@ public class Parser {
             case LET:
                 parseLet();
                 break;
+            case IF:
+                parseIf();
+                break;
             case WHILE:
                  parseWhile();
-                break;
-            case IF:
-                 parseIf();
                 break;
             case RETURN:
                  parseReturn();
@@ -301,6 +301,23 @@ public class Parser {
             default:
                 throw error(peekToken, "Expected a statement");
         }
+    }
+
+    
+
+    public void parseWhile() {
+        printNonTerminal("whileStatement");
+
+        expectPeek(TokenType.WHILE);
+        expectPeek(TokenType.LPAREN);
+        parseExpression();
+
+        expectPeek(TokenType.RPAREN);
+        expectPeek(TokenType.LBRACE);
+        parseStatements();
+
+        expectPeek(TokenType.RBRACE);
+        printNonTerminal("/whileStatement");
     }
 
 }
